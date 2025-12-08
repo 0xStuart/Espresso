@@ -2,7 +2,7 @@
 
 This repository contains 3D printable files for my espresso machine builds.
 
-![Stilosa1](Pictures/Stilosa1.jpg)
+<img src="Pictures/Stilosa1.jpg" alt="Stilosa1" width="60%">
 
 ## GaggiMate
 
