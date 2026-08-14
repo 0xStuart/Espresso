@@ -19,9 +19,33 @@ DisplayCylinderSlotBottomLength=34;
 DisplayCylinderSlotDepth=5.5;
 DisplayCylinderSlotHeight=42; // Height of the trapezoid along y-axis (Diameter/2 + Thickness)
 
+// SD card slot. Angle 0 is 6 o'clock (existing slot); -90 is 9, -180 is 12.
+// -135 is 10:30, spanning about 10 to 11 o'clock at the inner diameter.
+DisplayCylinderSDslotTopLength=19;
+DisplayCylinderSDslotBottomLength=17;
+DisplayCylinderSDslotDepth=5.5;
+DisplayCylinderSDslotHeight=42;
+DisplayCylinderSDslotAngle=-135;
+
 CutCircleCenter=-5; // below the center of DisplayCylinder along its y
 CutCircleDiameter=74;
 CutCircleDepth=DisplayCylinderDepthIn; // from the top of DisplayCylinderDepthIn down, along z
+
+// Trapezoid cut through the DisplayCylinder wall. Angle 0 is 6 o'clock (+X right, +Y up).
+module DisplayCylinderSlotCut(topLength, bottomLength, depth, height, angle = 0) {
+    rotate([90 - DisplayCylinderTilt/2, 0, 0])
+    translate([0, 0, DisplayCylinderCenterOffset])
+    translate([0, 0, DisplayCylinderDepthOut - depth])
+    rotate([0, 0, angle])
+    linear_extrude(height = depth + 1) {
+        polygon(points = [
+            [-(topLength/2), -sqrt(pow(DisplayCylinderDiameter/2, 2) - pow(topLength/2, 2))],
+            [ (topLength/2), -sqrt(pow(DisplayCylinderDiameter/2, 2) - pow(topLength/2, 2))],
+            [ bottomLength/2, -height],
+            [-bottomLength/2, -height]
+        ]);
+    }
+}
 
 module LShapedObject() {
     difference() {
@@ -106,25 +130,19 @@ module LShapedObject() {
         
         // Display Cylinder Slot
         // Cuts through the DisplayCylinder thickness from inner to outer surface
-        rotate([90 - DisplayCylinderTilt/2, 0, 0])
-        translate([0, 0, DisplayCylinderCenterOffset])
-        translate([0, 0, DisplayCylinderDepthOut - DisplayCylinderSlotDepth])
-        linear_extrude(height = DisplayCylinderSlotDepth + 1) {
-            polygon(points = [
-                // Inner Points
-                // The top ends touch the DisplayCylinderDiameter (inner circle), middle does not.
-                // X = +/- TopLength/2
-                // Y = -sqrt( (Diameter/2)^2 - (TopLength/2)^2 )  // on the circle
+        DisplayCylinderSlotCut(
+            DisplayCylinderSlotTopLength,
+            DisplayCylinderSlotBottomLength,
+            DisplayCylinderSlotDepth,
+            DisplayCylinderSlotHeight);
 
-                [-(DisplayCylinderSlotTopLength/2), -sqrt(pow(DisplayCylinderDiameter/2, 2) - pow(DisplayCylinderSlotTopLength/2, 2))],
-                [ (DisplayCylinderSlotTopLength/2), -sqrt(pow(DisplayCylinderDiameter/2, 2) - pow(DisplayCylinderSlotTopLength/2, 2))],
-
-                // Outer Points (at Y = -SlotHeight for controlled length)
-                // Bottom width = BottomLength (Narrowest part)
-                [ DisplayCylinderSlotBottomLength/2, -DisplayCylinderSlotHeight],
-                [-DisplayCylinderSlotBottomLength/2, -DisplayCylinderSlotHeight]
-            ]);
-        }
+        // SD card slot between 10 and 11 o'clock
+        DisplayCylinderSlotCut(
+            DisplayCylinderSDslotTopLength,
+            DisplayCylinderSDslotBottomLength,
+            DisplayCylinderSDslotDepth,
+            DisplayCylinderSDslotHeight,
+            DisplayCylinderSDslotAngle);
 
         // Cut Circle: solid cylinder inside DisplayCylinder to cut away material
         rotate([90 - DisplayCylinderTilt/2, 0, 0])
