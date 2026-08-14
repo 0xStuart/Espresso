@@ -4,7 +4,7 @@
 
 $fn = $preview ? 100 : 500;
 
-DisplayCylinderDiameter = 73.3;
+DisplayCylinderDiameter = 74;
 DisplayCylinderThickness = 10;
 DisplayCylinderDepthOut = 6;
 DisplayCylinderDepthIn = 9.86;
@@ -29,14 +29,14 @@ CutCircleDepth=DisplayCylinderDepthIn; // from the front face back, along z
 WireHoleDiameter = 10;
 
 // Waveshare ESP32-S3-Touch-LCD-2.8C 4*M2 standoffs (back view, mm from centre).
-// Top pair: ±29.5 x, +15.14 y. Bottom pair: ±18.0 x, -25.56 y.
+// Top pair: ±29.5 x, +14.14 y. Bottom pair: ±18.0 x, -26.56 y.
 // 6 o'clock is the FPC/cable, matching DisplayCylinderSlot.
-ScrewHoleDiameter = 2.4; // M2 clearance
+ScrewHoleDiameter = 2.5; // M2 clearance
 ScrewHoles = [
-    [-29.5,  15.14],
-    [ 29.5,  15.14],
-    [-18.0, -25.56],
-    [ 18.0, -25.56]
+    [-29.5,  14.14],
+    [ 29.5,  14.14],
+    [-18.0, -26.56],
+    [ 18.0, -26.56]
 ];
 
 DisplayCylinderHeight = DisplayCylinderDepthIn + DisplayCylinderDepthOut;
