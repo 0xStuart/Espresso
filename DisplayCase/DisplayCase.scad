@@ -35,7 +35,13 @@ DiceHoleOffset = 12; // outer holes at ±this in X and Y from the back centre
 MagnetHoleDiameter = 5.1;
 MagnetFasciaCover = 1; // plastic remaining in front of the magnet
 MagnetHoleRadius = DisplayCylinderDiameter / 2 + DisplayCylinderThickness / 2;
-MagnetHoleAngles = [90, -30, -150]; // 12, 4, 8 o'clock
+MagnetHoleSideOutset = 1; // 4 and 8 sit closer to the offset inner cut
+MagnetHoleTopOutset = 1; // 12 nudged toward the outer wall
+MagnetHoles = [
+    [90, MagnetHoleRadius + MagnetHoleTopOutset],
+    [-30, MagnetHoleRadius + MagnetHoleSideOutset],
+    [-150, MagnetHoleRadius + MagnetHoleSideOutset]
+];
 
 // Waveshare ESP32-S3-Touch-LCD-2.8C 4*M2 standoffs (back view, mm from centre).
 // Top pair: ±29.5 x, +14.14 y. Bottom pair: ±18.0 x, -26.56 y.
@@ -110,8 +116,10 @@ module DisplayCase() {
         }
 
         // Magnet pockets: open at the back, stop MagnetFasciaCover below the fascia
-        for (a = MagnetHoleAngles) {
-            translate([MagnetHoleRadius * cos(a), MagnetHoleRadius * sin(a), -1])
+        for (h = MagnetHoles) {
+            a = h[0];
+            r = h[1];
+            translate([r * cos(a), r * sin(a), -1])
             cylinder(h = DisplayCylinderHeight - MagnetFasciaCover + 1, d = MagnetHoleDiameter);
         }
     }
