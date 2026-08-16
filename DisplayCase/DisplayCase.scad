@@ -27,6 +27,8 @@ CutCircleDiameter=74;
 CutCircleDepth=DisplayCylinderDepthIn; // from the front face back, along z
 
 WireHoleDiameter = 10;
+OuterHoleDiameter = 3.2; // M3 clearance, matches DisplayBracket_C-Beam
+DiceHoleOffset = 12; // outer holes at ±this in X and Y from the back centre
 
 // Waveshare ESP32-S3-Touch-LCD-2.8C 4*M2 standoffs (back view, mm from centre).
 // Top pair: ±29.5 x, +14.14 y. Bottom pair: ±18.0 x, -26.56 y.
@@ -88,6 +90,11 @@ module DisplayCase() {
         // Wire hole through the solid back
         translate([0, 0, -1])
         cylinder(h = DisplayCylinderDepthIn + 2, d = WireHoleDiameter);
+
+        // Dice-five mount holes, matching DisplayBracket_C-Beam
+        for (dx = [-1, 1], dy = [-1, 1])
+            translate([dx * DiceHoleOffset, dy * DiceHoleOffset, -1])
+                cylinder(h = DisplayCylinderDepthIn + 2, d = OuterHoleDiameter);
 
         // M2 clearance holes through the back, aligned with the display standoffs
         for (xy = ScrewHoles) {
