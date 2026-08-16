@@ -30,6 +30,13 @@ WireHoleDiameter = 10;
 OuterHoleDiameter = 3.2; // M3 clearance, matches DisplayBracket_C-Beam
 DiceHoleOffset = 12; // outer holes at ±this in X and Y from the back centre
 
+// Magnets in the cylinder wall, inserted from the back. No hole at 6 o'clock (cable slot).
+// Angle 0 is +X (3 o'clock), 90 is +Y (12 o'clock); each hour is 30°.
+MagnetHoleDiameter = 5.1;
+MagnetFasciaCover = 1; // plastic remaining in front of the magnet
+MagnetHoleRadius = DisplayCylinderDiameter / 2 + DisplayCylinderThickness / 2;
+MagnetHoleAngles = [90, -30, -150]; // 12, 4, 8 o'clock
+
 // Waveshare ESP32-S3-Touch-LCD-2.8C 4*M2 standoffs (back view, mm from centre).
 // Top pair: ±29.5 x, +14.14 y. Bottom pair: ±18.0 x, -26.56 y.
 // 6 o'clock is the FPC/cable, matching DisplayCylinderSlot.
@@ -100,6 +107,12 @@ module DisplayCase() {
         for (xy = ScrewHoles) {
             translate([xy[0], xy[1], -1])
             cylinder(h = DisplayCylinderDepthIn + 2, d = ScrewHoleDiameter);
+        }
+
+        // Magnet pockets: open at the back, stop MagnetFasciaCover below the fascia
+        for (a = MagnetHoleAngles) {
+            translate([MagnetHoleRadius * cos(a), MagnetHoleRadius * sin(a), -1])
+            cylinder(h = DisplayCylinderHeight - MagnetFasciaCover + 1, d = MagnetHoleDiameter);
         }
     }
 }
