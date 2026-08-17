@@ -32,8 +32,8 @@ DiceHoleOffset = 12; // outer holes at ±this in X and Y from the back centre
 
 // Magnets in the cylinder wall, inserted from the back. No hole at 6 o'clock (cable slot).
 // Angle 0 is +X (3 o'clock), 90 is +Y (12 o'clock); each hour is 30°.
-MagnetHoleDiameter = 5.1;
-MagnetFasciaCover = 1; // plastic remaining in front of the magnet
+MagnetHoleDiameter = 5.4;
+MagnetFasciaCover = .6; // plastic remaining in front of the magnet
 MagnetHoleRadius = DisplayCylinderDiameter / 2 + DisplayCylinderThickness / 2;
 MagnetHoleSideOutset = 1; // 4 and 8 sit closer to the offset inner cut
 MagnetHoleTopOutset = 1; // 12 nudged toward the outer wall
