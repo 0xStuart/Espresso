@@ -6,10 +6,10 @@
 // cradle that centres a bottomless portafilter under the grind chute, and a
 // U-clip that snaps over the grinder base.
 //
-// Foot dimensions are taken from the original "Foot V2" STL: 134 x 20 x 25 mm
-// overall, 129 mm inner span (Opus 1 body width), 2.5 mm walls, 1 mm lips,
-// 20.5 mm channel height. Opus 2 is spec'd 130 mm wide; set GrinderWidth = 130
-// if 129 is tight.
+// Foot is a circular plate with a C-ring pocket and short U-clips that snap
+// over the grinder base. Clip span is from the original "Foot V2" STL: 129 mm
+// inner (Opus 1); Opus 2 is spec'd 130 mm — set GrinderWidth = 130 if 129 is
+// tight. Walls 2.5 mm, lips 1 mm, channel 20.5 mm.
 
 $fn = $preview ? 64 : 160;
 
@@ -35,11 +35,10 @@ LipChamfer = 3.0;
 
 /* [Foot clip — from original Foot V2 STL] */
 // Inner wall-to-wall span. Original STL is 129 (Opus 1); Opus 2 is 130 mm
-GrinderWidth = 129;
-// Extra plate beyond the holder (handle side is front)
-// Back extra is derived so C-centre to foot back is FootBackFromCenter
-FootBackFromCenter = 42;
-FootFrontExtra = 0;
+GrinderWidth = 130.2;
+FootDiameter = 120;
+// Clip run along the grinder, centred on the C
+ClipLength = 40;
 // Radial clearance so the holder drops into the foot
 CutoutClearance = 0.1;
 FootBase = 4;
@@ -58,8 +57,6 @@ r_outer = r_groove + WallThickness;
 groove_h = max(EarThickness + Clearance, LipChamfer + 1.2);
 groove_top = ShelfHeight + groove_h;
 wall_h = groove_top + RetainingLip;
-FootBackExtra = FootBackFromCenter - r_outer;
-foot_depth = 2 * r_outer + FootBackExtra + FootFrontExtra;
 
 module WallProfile() {
     chamfer = min(LipChamfer, r_groove - r_inner);
@@ -114,25 +111,29 @@ module Foot() {
     top_z = lip_z + FootLipThickness;
 
     difference() {
-        // U-clip: width along X, depth along Y, centred on the holder
-        translate([outer / 2, -(r_outer + FootBackExtra), 0])
-        rotate([0, 0, 90])
-        rotate([90, 0, 90])
-        linear_extrude(height = foot_depth)
-        polygon([
-            [0, 0],
-            [outer, 0],
-            [outer, top_z],
-            [outer - FootWall - FootLip, top_z],
-            [outer - FootWall - FootLip, lip_z],
-            [outer - FootWall, lip_z],
-            [outer - FootWall, FootBase],
-            [FootWall, FootBase],
-            [FootWall, lip_z],
-            [FootWall + FootLip, lip_z],
-            [FootWall + FootLip, top_z],
-            [0, top_z]
-        ]);
+        union() {
+            cylinder(d = FootDiameter, h = FootBase);
+
+            // U-clip: width along X, ClipLength along Y, centred on the C
+            translate([outer / 2, -ClipLength / 2, 0])
+            rotate([0, 0, 90])
+            rotate([90, 0, 90])
+            linear_extrude(height = ClipLength)
+            polygon([
+                [0, 0],
+                [outer, 0],
+                [outer, top_z],
+                [outer - FootWall - FootLip, top_z],
+                [outer - FootWall - FootLip, lip_z],
+                [outer - FootWall, lip_z],
+                [outer - FootWall, FootBase],
+                [FootWall, FootBase],
+                [FootWall, lip_z],
+                [FootWall + FootLip, lip_z],
+                [FootWall + FootLip, top_z],
+                [0, top_z]
+            ]);
+        }
 
         // Through-cut for the holder ring; inner oval remains as a basket pad
         translate([0, 0, -eps])
@@ -162,7 +163,8 @@ echo(str(
     " groove ID=", 2 * r_groove,
     " wall_h=", wall_h,
     " opening=", opening_angle, "deg ",
-    "Foot ", GrinderWidth + 2 * FootWall, "x", foot_depth, "x",
+    "Foot d=", FootDiameter,
+    " clip=", ClipLength, "x", GrinderWidth + 2 * FootWall, "x",
     FootBase + FootChannel + FootLipThickness,
     " inner=", GrinderWidth,
     " cutout r=", r_outer + CutoutClearance
