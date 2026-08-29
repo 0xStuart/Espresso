@@ -32,6 +32,8 @@ WallSweep = 200;
 WallThickness = 8.5;
 BaseThickness = 4;
 LipChamfer = 3.0;
+// Raise the outer rim so the top slopes down into the basket
+RimSlope = 5.0;
 
 /* [Foot clip — from original Foot V2 STL] */
 // Inner wall-to-wall span. Original STL is 129 (Opus 1); Opus 2 is 130 mm
@@ -39,6 +41,8 @@ GrinderWidth = 130.2;
 FootDiameter = 120;
 // Clip run along the grinder, centred on the C
 ClipLength = 40;
+// Shift the C pocket along Y; + is toward the handle, − toward the grinder
+CCutoutY = 5;
 // Radial clearance so the holder drops into the foot
 CutoutClearance = 0.1;
 FootBase = 4;
@@ -65,7 +69,7 @@ module WallProfile() {
     polygon([
         [r_inner, 0],
         [r_outer, 0],
-        [r_outer, wall_h],
+        [r_outer, wall_h + RimSlope],
         [r_inner, wall_h],
         [r_inner, groove_top],
         [r_inner + chamfer, groove_top],
@@ -136,7 +140,7 @@ module Foot() {
         }
 
         // Through-cut for the holder ring; inner oval remains as a basket pad
-        translate([0, 0, -eps])
+        translate([0, CCutoutY, -eps])
         linear_extrude(height = FootBase + 2 * eps)
             offset(delta = CutoutClearance)
                 HolderRing2D();
