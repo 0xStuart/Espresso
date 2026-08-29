@@ -79,18 +79,47 @@ module WallProfile() {
     ]);
 }
 
+// Circular plate minus the handle-side U-slot; clips the wall to the base C
+module HolderFootprint2D() {
+    difference() {
+        circle(r = r_outer);
+        translate([-r_inner, 0])
+            square([2 * r_inner, r_outer + 5]);
+    }
+}
+
+// Same slot profile, swept straight along +Y so the portafilter can slide in
+module WallArm() {
+    translate([0, r_outer + eps, 0])
+    rotate([90, 0, 0])
+    linear_extrude(height = r_outer + 2 * eps)
+        WallProfile();
+}
+
 module Holder() {
     difference() {
         union() {
             cylinder(r = r_outer, h = BaseThickness);
 
-            rotate([0, 0, 90 + opening_angle / 2])
-            rotate_extrude(angle = WallSweep)
-                WallProfile();
+            intersection() {
+                union() {
+                    // Back half ends on the X axis so the straight arms meet flush
+                    rotate([0, 0, 180])
+                    rotate_extrude(angle = 180)
+                        WallProfile();
+
+                    WallArm();
+                    mirror([1, 0, 0])
+                        WallArm();
+                }
+
+                linear_extrude(height = wall_h + RimSlope)
+                    HolderFootprint2D();
+            }
         }
 
         translate([0, 0, -eps])
-        cylinder(r = r_inner, h = wall_h + 2 * eps);
+        cylinder(r = r_inner, h = wall_h + RimSlope + 2 * eps);
 
         // U-slot so the basket can slide in from the handle side (+Y)
         translate([-r_inner, 0, -eps])
