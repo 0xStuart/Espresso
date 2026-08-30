@@ -12,7 +12,7 @@ Height = 60;
 Diameter = 80;
 
 /* [Bore] */
-HoleDiameter = 59;
+HoleDiameter = 60;
 HoleDepth = 29.3;
 
 /* [Side slot] */
@@ -21,6 +21,16 @@ SlotExtraDepth = 7;
 SlotWidth = 20;
 // Y where the slot stops; 0 = through to the axis, hole radius = wall only
 SlotFromCenter = 25;
+// Handle rest: sticks out +Y from the body
+HandleSupport = 25;
+// Height of the rest, measured down from the slot floor (capped at the base)
+HandleSupportHeight = 23.7;
+// Shift the rest top from the slot floor; negative is down
+HandleHeightAdjust = -10;
+HandleHoleDiameter = 6.5;
+HandleHoleDepth = 12;
+// Hole centre, inward from the +Y end of the rest
+HandleHoleFromEnd = 10;
 
 /* [Funnel] */
 // Upright collar above the body, same diameter
@@ -41,6 +51,8 @@ EarAngles = [0, 180];
 eps = 0.05;
 
 slot_depth = HoleDepth + SlotExtraDepth;
+handle_support_top = Height - slot_depth + HandleHeightAdjust;
+handle_support_h = min(HandleSupportHeight, max(handle_support_top, 0));
 r_outer = Diameter / 2;
 r_inner = HoleDiameter / 2;
 funnel_top_outer = r_outer + FunnelFlare;
@@ -48,14 +60,28 @@ funnel_top_inner = funnel_top_outer - FunnelTopWall;
 
 module Body() {
     difference() {
-        cylinder(d = Diameter, h = Height);
+        union() {
+            cylinder(d = Diameter, h = Height);
+
+            // Support under the handle slot, out along +Y
+            translate([-SlotWidth / 2, r_outer - 2, handle_support_top - handle_support_h])
+            cube([SlotWidth, HandleSupport + 2, handle_support_h]);
+        }
 
         translate([0, 0, Height - HoleDepth])
         cylinder(d = HoleDiameter, h = HoleDepth + eps);
 
         // Slot toward +Y (handle), from SlotFromCenter out through the wall
         translate([-SlotWidth / 2, SlotFromCenter, Height - slot_depth])
-        cube([SlotWidth, Diameter / 2 - SlotFromCenter + eps, slot_depth + eps]);
+        cube([SlotWidth, r_outer - SlotFromCenter + eps, slot_depth + eps]);
+
+        // Hole in the handle rest, centred, from the top down
+        translate([
+            0,
+            r_outer + HandleSupport - HandleHoleFromEnd,
+            handle_support_top - HandleHoleDepth
+        ])
+        cylinder(d = HandleHoleDiameter, h = HandleHoleDepth + eps);
     }
 }
 
@@ -69,8 +95,11 @@ module EarSlot() {
     ]);
 }
 
-// Ring matching the body OD, then a collar and an outward flare
+// Ring matching the body OD, then a collar and an outward flare.
+// Built upside down (flare on the bed) so it prints without support.
 module Funnel() {
+    translate([0, 0, CollarHeight + FlareHeight])
+    rotate([180, 0, 0])
     difference() {
         rotate_extrude()
         polygon([
