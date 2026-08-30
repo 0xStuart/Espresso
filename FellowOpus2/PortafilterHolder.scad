@@ -20,17 +20,17 @@ Part = "preview"; // [preview, holder, foot]
 /* [Portafilter (defaults: 58mm Gaggia)] */
 BasketDiameter = 60.5;
 EarSpan = 70;
-EarThickness = 6.2;
+EarThickness = 5.3;
 Clearance = 0.6;
 
 /* [Holder] */
 // Underside of ears above the tray when the basket sits on the tray
-ShelfHeight = 35;
+ShelfHeight = 36.7;
 RetainingLip = 4.0;
 // Wall arc in degrees (opening is 360 minus this, facing +Y / the handle)
 WallSweep = 200;
 WallThickness = 8.5;
-BaseThickness = 4;
+BaseThickness = 5;
 LipChamfer = 3.0;
 // Raise the outer rim so the top slopes down into the basket
 RimSlope = 5.0;
@@ -45,7 +45,7 @@ ClipLength = 40;
 CCutoutY = 5;
 // Radial clearance so the holder drops into the foot
 CutoutClearance = 0.1;
-FootBase = 4;
+FootBase = 5;
 FootWall = 2.5;
 FootLip = 0.1;
 FootChannel = 20.5;
