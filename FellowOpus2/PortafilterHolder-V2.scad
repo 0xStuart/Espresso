@@ -184,7 +184,7 @@ module Base() {
         LocatorScrewHoles(-eps, FootBase);
         for (a = LocatorScrewAngles)
             rotate([0, 0, a])
-            translate([r_loc_screw, 0, -eps])
+            translate([r_loc_screw, 0, FootBase - LocatorScrewCountersinkDepth])
             cylinder(
                 d = LocatorScrewCountersinkDiameter,
                 h = LocatorScrewCountersinkDepth + eps
