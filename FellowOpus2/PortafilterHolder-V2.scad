@@ -4,8 +4,8 @@
 $fn = $preview ? 64 : 160;
 
 /* [Part] */
-// preview = parts laid out; body / funnel / base = single part
-Part = "preview"; // [preview, body, funnel, base, locator]
+// preview = parts laid out; body / funnel = single part
+Part = "preview"; // [preview, body, funnel]
 
 /* [Body] */
 Height = 60;
@@ -42,30 +42,6 @@ FunnelFlare = 15;
 // Wall thickness at the top rim (base ring is thicker)
 FunnelTopWall = 7;
 
-/* [Base — U-clip from the V1 foot, no cutouts] */
-GrinderWidth = 130.2;
-FootDiameter = 120;
-ClipLength = 40;
-FootBase = 5;
-FootWall = 2.5;
-FootLip = 0.1;
-FootChannel = 20.5;
-FootLipThickness = 2.0;
-
-/* [Locator wall — body rests against this on the base] */
-LocatorHeight = 30;
-LocatorThickness = 10;
-LocatorSweep = 180;
-LocatorClearance = 0.2;
-LocatorScrewDiameter = 2;
-LocatorScrewCountersinkDiameter = 7;
-LocatorScrewCountersinkDepth = 2;
-// How far the end holes move toward 6 o'clock
-LocatorScrewEndInset = 25;
-LocatorScrewDepth = 10;
-// 270 = 6 o'clock (back); ends are inset from 9 and 3
-LocatorScrewAngles = [180 + LocatorScrewEndInset, 270, 360 - LocatorScrewEndInset];
-
 /* [Funnel ear slots] */
 EarWidth = 21;
 EarHeight = 7;
@@ -81,9 +57,6 @@ r_outer = Diameter / 2;
 r_inner = HoleDiameter / 2;
 funnel_top_outer = r_outer + FunnelFlare;
 funnel_top_inner = funnel_top_outer - FunnelTopWall;
-r_loc_inner = r_outer + LocatorClearance;
-r_loc_outer = r_loc_inner + LocatorThickness;
-r_loc_screw = (r_loc_inner + r_loc_outer) / 2;
 
 module Body() {
     difference() {
@@ -144,88 +117,12 @@ module Funnel() {
     }
 }
 
-module LocatorScrewHoles(z, h) {
-    for (a = LocatorScrewAngles)
-        rotate([0, 0, a])
-        translate([r_loc_screw, 0, z])
-        cylinder(d = LocatorScrewDiameter, h = h + eps);
-}
-
-// Circular plate plus U-clips; screw holes align with the locator
-module Base() {
-    outer = GrinderWidth + 2 * FootWall;
-    lip_z = FootBase + FootChannel;
-    top_z = lip_z + FootLipThickness;
-
-    difference() {
-        union() {
-            cylinder(d = FootDiameter, h = FootBase);
-
-            translate([outer / 2, -ClipLength / 2, 0])
-            rotate([0, 0, 90])
-            rotate([90, 0, 90])
-            linear_extrude(height = ClipLength)
-            polygon([
-                [0, 0],
-                [outer, 0],
-                [outer, top_z],
-                [outer - FootWall - FootLip, top_z],
-                [outer - FootWall - FootLip, lip_z],
-                [outer - FootWall, lip_z],
-                [outer - FootWall, FootBase],
-                [FootWall, FootBase],
-                [FootWall, lip_z],
-                [FootWall + FootLip, lip_z],
-                [FootWall + FootLip, top_z],
-                [0, top_z]
-            ]);
-        }
-
-        LocatorScrewHoles(-eps, FootBase);
-        for (a = LocatorScrewAngles)
-            rotate([0, 0, a])
-            translate([r_loc_screw, 0, FootBase - LocatorScrewCountersinkDepth])
-            cylinder(
-                d = LocatorScrewCountersinkDiameter,
-                h = LocatorScrewCountersinkDepth + eps
-            );
-    }
-}
-
-// Partial semicircle the body pushes against; screws into the base
-module Locator() {
-    difference() {
-        rotate([0, 0, 180])
-        rotate_extrude(angle = LocatorSweep)
-        translate([r_loc_inner, 0])
-        square([LocatorThickness, LocatorHeight]);
-
-        LocatorScrewHoles(LocatorHeight - LocatorScrewDepth, LocatorScrewDepth);
-    }
-}
-
 if (Part == "body") {
     Body();
 } else if (Part == "funnel") {
     Funnel();
-} else if (Part == "base") {
-    Base();
-} else if (Part == "locator") {
-    Locator();
 } else {
     Body();
     translate([-(Diameter / 2 + r_outer + FunnelFlare + 10), 0, 0])
         Funnel();
-    translate([
-        r_outer + HandleSupport + (GrinderWidth + 2 * FootWall) / 2 + 10,
-        0,
-        0
-    ])
-        Base();
-    translate([
-        r_outer + HandleSupport + (GrinderWidth + 2 * FootWall) + r_loc_outer + 20,
-        0,
-        0
-    ])
-        Locator();
 }
