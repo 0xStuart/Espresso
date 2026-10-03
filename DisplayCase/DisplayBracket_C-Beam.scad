@@ -9,21 +9,21 @@ ChannelWidth = 40;
 ChannelDepth = 20;
 InsertLength = 30;
 ArmLength = 40;
-LeanAngle = 20; // degrees from vertical, top of the arm leans away from the user
+LeanAngle = 30; // degrees from vertical, top of the arm leans away from the user
 Clearance = 0.2;
 Overlap = 1;
 ArmRecessMargin = 3; // border around the back-face recess
 ArmRecessDepthFraction = 0.8; // fraction of arm depth, from the back
 CenterHoleDiameter = 10;
-OuterHoleDiameter = 3.2; // M3 clearance
+OuterHoleDiameter = 4; // M3 + clearance
 DiceHoleOffset = 12; // outer holes at ±this in X and Z from the face centre
 
 // T-slots inside the C-channel, from the 4080 drawing
 SlotPitch = 20;
 SlotOpening = 6.25;
 SlotInnerWidth = 9.16;
-SlotDepth = 4.30;
-SlotLip = 1.80;
+SlotDepth = 4.50;
+SlotLip = 2;
 
 InsertW = ChannelWidth - 2*Clearance;
 InsertD = ChannelDepth - 2*Clearance;
