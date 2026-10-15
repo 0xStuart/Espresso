@@ -19,7 +19,11 @@ SlotPitch = 20;
 SlotOpening = 6.25;
 SlotInnerWidth = 9.16;
 SlotDepth = 4.50;
-SlotLip = 2.2;
+SlotLip = 2;
+// Gap between a key head and the underside of the slot lip. The bracket already
+// sits Clearance off each slot face, so the total play across the lip is
+// Clearance + LipClearance (0.4 was too loose, 0 on 2020-WireHoles too tight).
+LipClearance = 0;
 
 // Outer T-slots on the 80 mm face, from BoilerPlate.scad
 OuterSlotSpacing = 60;
@@ -73,7 +77,7 @@ module TSlotKeyProfile(lip) {
     ]);
 }
 
-module TSlotKey(lip = SlotLip) {
+module TSlotKey(lip = SlotLip + LipClearance) {
     linear_extrude(height = InsertLength)
         TSlotKeyProfile(lip);
 }
@@ -105,7 +109,7 @@ module Flange() {
     for (x = [-OuterSlotSpacing/2, OuterSlotSpacing/2])
         translate([x, FaceY, -InsertLength])
             mirror([0, 1, 0])
-                TSlotKey(OuterSlotLip + 2*Clearance); // FaceY sits Clearance off the face
+                TSlotKey(OuterSlotLip + Clearance + LipClearance); // FaceY sits Clearance off the face
 }
 
 module ArmHoles() {
