@@ -38,19 +38,19 @@ ScrewHeadDiameter = 5.2;
 ScrewHeadDepth = 1.4;    // counterbore from the back
 
 /* [Cutouts - left wall (front view)] */
-Cut_USB_UART = true;
+Cut_USB_UART = false;
 Cut_USB_C = true;
-Cut_USB_A = true;
-Cut_PowerSwitch = true;
+Cut_USB_A = false;
+Cut_PowerSwitch = false;
 
 /* [Cutouts - right wall (front view)] */
-Cut_Boot = true;
-Cut_Reset = true;
+Cut_Boot = false;
+Cut_Reset = false;
 
 /* [Cutouts - bottom wall] */
-Cut_TFCard = true;
-Cut_Mic1 = true;
-Cut_Mic2 = true;
+Cut_TFCard = false;
+Cut_Mic1 = false;
+Cut_Mic2 = false;
 Cut_FPCRelief1 = true;
 Cut_FPCRelief2 = true;
 
